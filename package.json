@@ -1,0 +1,19 @@
+{
+  "name": "salesgenie_category_remover",
+  "version": "0.0.1",
+  "description": "remove specified categories from sales genie lead list",
+  "main": "app.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/holaymolay/salesgenie_category_remover.git"
+  },
+  "author": "Brian Jason",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/holaymolay/salesgenie_category_remover/issues"
+  },
+  "homepage": "https://github.com/holaymolay/salesgenie_category_remover#readme"
+}
