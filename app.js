@@ -1,5 +1,16 @@
 #!/usr/bin/env node
 
+const CSV = require('csv-string')
+
+const filePath = "./tmp/";
+const inputFile = "input.csv";
+
+const file = filePath + inputFile;
+
+// working
+
+
+
 
 
 /*

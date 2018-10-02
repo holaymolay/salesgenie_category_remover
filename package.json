@@ -15,5 +15,8 @@
   "bugs": {
     "url": "https://github.com/holaymolay/salesgenie_category_remover/issues"
   },
-  "homepage": "https://github.com/holaymolay/salesgenie_category_remover#readme"
+  "homepage": "https://github.com/holaymolay/salesgenie_category_remover#readme",
+  "dependencies": {
+    "csv-string": "^3.1.5"
+  }
 }
