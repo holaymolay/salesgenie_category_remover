@@ -1,25 +1,31 @@
 #!/usr/bin/env node
+const express = require("express");
+const bodyParser = require("body-parser");
+const compression = require('compression');
 
-const csvCat = require('./lib/category.js');
+var app = express();
+var port = process.env.PORT || 3000;
 
-var categoryArray = csvCat.extractAllCategories();
-console.log(categoryArray);
+app.set("view engine", "ejs");
+app.use(compression());
+app.use(express.static("public"));
+app.use('/modules', express.static('node_modules'));
+app.use(require('./routes/index'));
 
 
-
-console.log(categoryArray)
-var uniqueArray = categoryArray.filter(function(elem, pos) {
-                    return categoryArray.indexOf(elem) == pos;
-                  })
-
-console.log(uniqueArray);
+var server = app.listen(port, function () {
+  console.log("\n/********************************************/");
+  console.log('\tServer listening on port ' + port + '!');
+  if(port == 3000){console.log('\thttp://localhost:3000/')};
+  console.log("/********************************************/\n");
+});
 
 
 
 /*
 
-1. upload .csv file (exported from sales genie)
-2. compile array of unique category names from .csv
+1. [DONE] upload .csv file (exported from sales genie)
+2. [DONE] compile array of unique category names from .csv
 3. display list
   - via html
   - make items selectable
