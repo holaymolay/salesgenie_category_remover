@@ -6,6 +6,7 @@ var bodyParser = require("body-parser");
 const compression = require('compression');
 const CSV = require('csv-string')
 const csvCat = require('../lib/category.js');
+const presets = require('../lib/presets.js');
 
 var router = express.Router();
 var categoryHeaders = csvCat.extractHeaders();
@@ -18,14 +19,16 @@ router.use(function timeLog(req, res, next) {
 
 router.get('/', function(req, res) {
   var categoryArray = csvCat.extractAllCategories();
-  res.render('index', { categories: categoryArray });
+
+  var presets = []; // for saved presets (be sure to JSON.stringify)
+
+  res.render('index', { categories: categoryArray, presets: presets });
 });
 
 router.post('/clean-list', function(req, res) {
   //console.log(JSON.parse(req.body.categoryValues).keep);
   //console.log(CSV.stringify(csvArray));
   let categoriesToKeep = JSON.parse(req.body.categoryValues).keep;
-
   let newCSV = csvCat.createNewCSV(categoriesToKeep);
   newCSV.unshift(categoryHeaders);
   res.csv(newCSV);
