@@ -6,7 +6,6 @@
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css" integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO" crossorigin="anonymous">
     <link rel="stylesheet" type="text/css" href="css/multi-select.css">
     <link rel="stylesheet" type="text/css" href="css/stylesheet.css">
-
     <style>
       body {
         padding: 1.5em;
@@ -16,33 +15,47 @@
         padding: 1em 0 1em 0;
       }
 
+      #submitButton {
+        visibility: hidden;
+      }
+
     </style>
+
   </head>
   <body>
     <div class="container border">
       <div class="contents border">
         <p id="select_buttons" class="border">
-          <button type="button" class="btn btn-outline-primary" id="select-all" onclick="selectAll();">Select All</button>
-          <button type="button" class="btn btn-outline-warning" id="deselect-all" onclick="deselectAll();">Deselect All</button>
+          <button type="button" class="btn btn-outline-primary" id="select-all" onclick="selectAll();">Keep All</button>
+          <button type="button" class="btn btn-outline-warning" id="deselect-all" onclick="deselectAll();">Remove All</button>
         </p>
         <p class="border">
           <select id='pre-selected-options' multiple='multiple border'>
-            <% categories.forEach(function(category) { %>
-              <option value='<%= category %>' selected><%= category %></option>
-              <% }); %>
+            <% for(j=0; j < categories.length; j++) { %>
+              <option id='option<%= j %>' value='<%= categories[j] %>' selected><%= categories[j] %></option>
+              <% } %>
             </select>
           </p>
       </div>
+      <button type="button" class="btn btn-outline-primary" id="submit" onclick="submitSelect();">Submit</button>
+
     </div>
+
+    <form action="/category" method="post" id="categoryForm">
+      <input type="hidden" value="" id="categoryValues" name="categoryValues">
+    </form>
+
     <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js" integrity="sha384-ZMP7rVo3mIykV+2+9J3UJ46jBk0WLaUAdn689aCwoqbBJiSnjAK/l8WvCWPIPm49" crossorigin="anonymous"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js" integrity="sha384-ChfqqxuZUCnJSK3+MXmPNIyE6ZbWh2IMqE241rYiqJxyMiZ6OW/JmZQ5stwEULTy" crossorigin="anonymous"></script>
     <script src="js/jquery.multi-select.js"></script>
     <script type="text/javascript">
+      var categoryArray = ['<%- categories.join("\',\'") %>'];
+
       // run pre selected options
       $('#pre-selected-options').multiSelect({
-          selectableHeader: "<div class='custom-header font-weight-bold text-center'>Removed Categories</div>",
-          selectionHeader: "<div class='custom-header font-weight-bold text-center'>Selected Categories</div>"
+          selectableHeader: "<div class='custom-header font-weight-bold text-center'>Categories to Remove</div>",
+          selectionHeader: "<div class='custom-header font-weight-bold text-center'>Categories to Keep</div>"
         });
 
       function selectAll() {
@@ -51,6 +64,31 @@
 
       function deselectAll() {
         $('#pre-selected-options').multiSelect('deselect_all');
+      };
+
+
+      function submitSelect() {
+        let catKeep = new Array();
+        let catDiscard = new Array();
+
+        for(i = 0; i < categoryArray.length; i++) {
+          let opId = 'option' + i + '';
+          let opId_h = "#" + opId;
+
+          if(document.getElementById(opId).selected) {
+            catKeep.push( $(opId_h).val() );
+          } else {
+            catDiscard.push( $(opId_h).val() );
+          }
+        }
+
+        let data = {
+          'keep': catKeep,
+          'discard': catDiscard
+        };
+
+        document.getElementById('categoryValues').value = JSON.stringify(data);
+        document.getElementById('categoryForm').submit();
       };
     </script>
   </body>

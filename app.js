@@ -10,8 +10,10 @@ app.set("view engine", "ejs");
 app.use(compression());
 app.use(express.static("public"));
 app.use('/modules', express.static('node_modules'));
-app.use(require('./routes/index'));
+app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({extended: false }));
 
+app.use(require('./routes/index'));
 
 var server = app.listen(port, function () {
   console.log("\n/********************************************/");
