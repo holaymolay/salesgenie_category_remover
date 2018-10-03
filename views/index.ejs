@@ -7,17 +7,7 @@
     <link rel="stylesheet" type="text/css" href="css/multi-select.css">
     <link rel="stylesheet" type="text/css" href="css/stylesheet.css">
     <style>
-      body {
-        padding: 1.5em;
-      }
 
-      #select_buttons {
-        padding: 1em 0 1em 0;
-      }
-
-      #submitButton {
-        visibility: hidden;
-      }
 
     </style>
 
@@ -41,7 +31,7 @@
 
     </div>
 
-    <form action="/category" method="post" id="categoryForm">
+    <form action="/clean-list" method="post" id="categoryForm">
       <input type="hidden" value="" id="categoryValues" name="categoryValues">
     </form>
 
@@ -91,5 +81,6 @@
         document.getElementById('categoryForm').submit();
       };
     </script>
+
   </body>
 </html>

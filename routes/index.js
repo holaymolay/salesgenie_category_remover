@@ -1,11 +1,14 @@
 #!/usr/bin/env node
 
 const express = require('express');
+const ecsv = require('express-csv');
 var bodyParser = require("body-parser");
 const compression = require('compression');
+const CSV = require('csv-string')
 const csvCat = require('../lib/category.js');
 
 var router = express.Router();
+var categoryHeaders = csvCat.extractHeaders();
 
 //Middle ware that is specific to this router
 router.use(function timeLog(req, res, next) {
@@ -18,11 +21,14 @@ router.get('/', function(req, res) {
   res.render('index', { categories: categoryArray });
 });
 
-router.post('/category', function(req, res) {
-  //console.log(req.body.keep)
-  //res.render('result', { results: categoryArray });
-  //console.log(req.body.categoryValues);
-  res.send(req.body.categoryValues);
+router.post('/clean-list', function(req, res) {
+  //console.log(JSON.parse(req.body.categoryValues).keep);
+  //console.log(CSV.stringify(csvArray));
+  let categoriesToKeep = JSON.parse(req.body.categoryValues).keep;
+
+  let newCSV = csvCat.createNewCSV(categoriesToKeep);
+  newCSV.unshift(categoryHeaders);
+  res.csv(newCSV);
 });
 
 module.exports = router;
