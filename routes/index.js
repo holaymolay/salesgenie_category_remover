@@ -18,11 +18,17 @@ router.use(function timeLog(req, res, next) {
 });
 
 router.get('/', function(req, res) {
-  var categoryArray = csvCat.extractAllCategories();
+  //var categoryArray = csvCat.extractAllCategories();
+  //var businessArray = csvCat.csvArray;
+  //var businessArray2 = csvCat.extractAll('businesses');
+  //var categoryArray2 = csvCat.extractAll('categories');
 
-  var presets = []; // for saved presets (be sure to JSON.stringify)
 
-  res.render('index', { categories: categoryArray, presets: presets });
+  res.render('index', {
+    list: csvCat.extractAll(),
+    presets: csvCat.getPresets()
+  });
+
 });
 
 router.post('/clean-list', function(req, res) {
