@@ -75,6 +75,7 @@
         </div>
       </div>
 
+      <button type="button" class="btn btn-outline-danger" id="next" onclick="nextTab();">NEXT</button>
       <button type="button" class="btn btn-outline-primary" id="submit" onclick="submitSelect();">Submit</button>
 
     </div>
@@ -92,15 +93,70 @@
     <% for(a=0; a < list.length; a++) { %>
       <%   let itemZero = '\"' + list[a][0] + '\"';  %>
       <%   let itemOne =  '\"' + list[a][1] + '\"';  %>
-      <%   list[a] = itemOne + ': ' + itemZero; %>
+      <%   list[a] = '[' + itemOne + ', ' + itemZero + ']'; %>
     <% } %>
 
     <script type="text/javascript">
+      var listObj = [<%- list.join(', \n') %>];
+
+      // 1. on category change
+      //   - get array of changed categories
+      //   - get array of businesses that match those categories
+      //   - get array of ids that match those businesses
+      function getCategores(){
+        let result = { "selected": [], "deselected": [] };
+
+        // get each option value and place in selected or deselected
+        // depending on 'selected' attribute
+
+
+        return result;
+      };
+
+
+      function getBusinessNames(categories){
+        let result = { "selected": [], "deselected": [] };
+
+        // loop through array categories.selected
+        //   for each item, loop through listArray
+        //     for each item
+        //        if item[1] == category.selected item, then push item[0] to result.selected
+
+        // repeat for categories.deselected
+
+        return result;
+      };
+
+      function getBusinessIds(businessNames){
+        let result = { "selected": [], "deselected": [] };
+        // loop through options_businesses
+        //   for each item
+        //     if businessNames.selected includes item.val(), then push item id to result.selected
+
+        // repeat for businessNames.deselected
+        return result; 
+      };
+
+      function updateSelection(businessIds){
+        $('#pre-selected-businesses').multiSelect( 'select', businessIds.selected );
+        $('#pre-selected-businesses').multiSelect('deselect', businessIds.deselected);
+      };
+
+      function nextTab(){
+        let categories = getCategories();
+        let businessNames = getBusinessNames(categories);
+        let businessIds = getBusinessIds(businessNames);
+        updateSelection(businessIds);
+      };
+
+    </script>
+
+    <script type="text/javascript">
+    /*
       var listObj = {<%- list.join(', \n') %>};
 
       function getBusinesses(){};
       function getCategories(){};
-
 
       $('#pre-selected-categories').on('change', function(){
         // loop through pre-selected-categories
@@ -135,13 +191,12 @@
             //console.log(optionValues.deselected.includes( listObj[ thisOption ] ));
             //set select attribute to false
             console.log($(this))
-            $("#pre-selected-businesses").multiSelect('deselect', $(this) );
-            $("#pre-selected-businesses").multiSelect('deselect-all');
-
+            $("#pre-selected-businesses").multiSelect('deselect', [$(this)] );
           }
         });
 
       });
+      */
     </script>
 
     <script type="text/javascript">
