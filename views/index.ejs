@@ -32,9 +32,29 @@
           </p>
           <p class="">
             <select id='pre-selected-categories' multiple='multiple'>
+
+              <% var keepCategoryArray = new Array(); %>
+              <% var keepBusinessArray = new Array(); %>
+
               <% for(j=0; j < list.length; j++) { %>
-                <option id='option_categories<%= j %>' value='<%= list[j][0] %>' selected><%= list[j][0] %></option>
+
+                <% if(keepCategoryArray.indexOf(list[j][0]) == -1) { %>
+                <%   keepCategoryArray.push(list[j][0]); %>
                 <% } %>
+
+                <% if(keepBusinessArray.indexOf(list[j][1]) == -1) { %>
+                <%   keepBusinessArray.push(list[j][1]); %>
+                <% } %>
+
+              <% } %>
+
+              <%  keepCategoryArray.sort(); %>
+              <%  keepBusinessArray.sort(); %>
+
+              <% for(q=0; q < keepCategoryArray.length; q++){ %>
+
+              <option id='option_categories<%= q %>' value='<%= keepCategoryArray[q] %>' selected><%= keepCategoryArray[q] %></option>
+              <% } %>
               </select>
             </p>
         </div>
@@ -45,11 +65,11 @@
             <button type="button" class="btn btn-outline-warning" id="deselect-all" onclick="deselectAll('businesses');">Remove All</button>
           </p>
           <p class="">
-            <select id='pre-selected-categories' multiple='multiple'>
-              <% for(j=0; j < list.length; j++) { %>
-                <option id='option_businesses<%= j %>' value='<%= list[j][1] %>' selected><%= list[j][1] %></option>
-                <% } %>
-              </select>
+            <select id='pre-selected-businesses' multiple='multiple'>
+              <% for(q=0; q < keepBusinessArray.length; q++){ %>
+              <option id='option_businesses<%= q %>' value='<%= keepBusinessArray[q] %>' selected><%= keepBusinessArray[q] %></option>
+              <% } %>
+            </select>
             </p>
 
         </div>
@@ -67,66 +87,61 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js" integrity="sha384-ZMP7rVo3mIykV+2+9J3UJ46jBk0WLaUAdn689aCwoqbBJiSnjAK/l8WvCWPIPm49" crossorigin="anonymous"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js" integrity="sha384-ChfqqxuZUCnJSK3+MXmPNIyE6ZbWh2IMqE241rYiqJxyMiZ6OW/JmZQ5stwEULTy" crossorigin="anonymous"></script>
     <script src="js/jquery.multi-select.js"></script>
-    
-    <% for(a=0; a < list.length; a++) { %>
-      <%   let itemZero = "\"" + list[a][0] + "\"";  %>
-      <%   let itemOne =  "\"" + list[a][1] + "\"";  %>
-      <%   list[a] = "[" + itemZero + "," + itemOne + "]"; %>
-      <% } %>
-    <script type="text/javascript">
-      var listArray = [<%- list.join(', \n') %>];
+    <script src="js/main.js"></script>
 
-      // run pre selected options
-      $('#pre-selected-categories').multiSelect({
-          selectableHeader: "<div class='custom-header font-weight-bold text-center'>Categories to Remove</div>",
-          selectionHeader: "<div class='custom-header font-weight-bold text-center'>Categories to Keep</div>"
+    <% for(a=0; a < list.length; a++) { %>
+      <%   let itemZero = '\"' + list[a][0] + '\"';  %>
+      <%   let itemOne =  '\"' + list[a][1] + '\"';  %>
+      <%   list[a] = itemOne + ': ' + itemZero; %>
+    <% } %>
+
+    <script type="text/javascript">
+      var listObj = {<%- list.join(', \n') %>};
+
+      function getBusinesses(){};
+      function getCategories(){};
+
+
+      $('#pre-selected-categories').on('change', function(){
+        // loop through pre-selected-categories
+        //   and push each de-selected option value to array (deselectedCategory)
+
+        var optionValues = {
+          "selected": [],
+          "deselected": []
+        };
+
+        //console.log( $('#pre-selected-categories option').attr('selected') );
+        $("#pre-selected-categories option").each(function(i){
+          let optionId = "option_categories" + i;
+          if($('#' + optionId).is(":selected") == true) {
+            optionValues.selected.push($('#' + optionId).val());
+          } else {
+            optionValues.deselected.push($('#' + optionId).val());
+          }
+        });
+        //console.log(optionValues.selected);
+// works
+
+        // loop through #pre-selected-businesses
+        //   if deselectedCategory includes option value then set select attribute to false
+        //   else set select attribute to true
+        $("#pre-selected-businesses option").each(function(i){
+          //console.log($(this));
+          //console.log($(this).val());
+          let thisOption = $(this).val();
+          //console.log($(this).attr());
+          if(optionValues.deselected.includes( listObj[ thisOption ] ))  {
+            //console.log(optionValues.deselected.includes( listObj[ thisOption ] ));
+            //set select attribute to false
+            console.log($(this))
+            $("#pre-selected-businesses").multiSelect('deselect', $(this) );
+            $("#pre-selected-businesses").multiSelect('deselect-all');
+
+          }
         });
 
-      function selectAll(type) {
-        if(type == 'categories') {
-          $('#pre-selected-categories').multiSelect('select_all');
-        } else {
-          $('#pre-selected-businesses').multiSelect('select_all');
-        }
-      };
-
-      function deselectAll(type) {
-        if(type == 'categories') {
-          $('#pre-selected-categories').multiSelect('deselect_all');
-        } else {
-          $('#pre-selected-businesses').multiSelect('deselect_all');
-        }
-      };
-
-      function getState(listType){
-        let keep = new Array();
-        let discard = new Array();
-
-        for(i = 0; i < categoryArray.length; i++) {
-          let opId = 'option_' + listType + i + '';
-
-          if(document.getElementById(opId).selected) {
-            keep.push( $("#" + opId).val() );
-          } else {
-            discard.push( $("#" + opId).val() );
-          }
-        }
-
-        return { "keep": keep, "discard": discard };
-      };
-
-      function submitSelect() {
-        let data = {
-          "categories": getState('categories'),
-          "businesses": getState('businesses')
-        }
-
-        document.getElementById('selectionValues').value = JSON.stringify(data);
-        document.getElementById('categoryForm').submit();
-      };
-
-
-
+      });
     </script>
 
     <script type="text/javascript">
@@ -141,16 +156,8 @@
         // 5. Presets are used to choose which options are selected
         // 6. Apply Preset(s) button
 
-        $('#pre-selected-categories').on('change', function(){
-          /*
-            let str = document.getElementById('businesses').innerText;
-            let num = Number(str);
-            num += 1;
-            document.getElementById('businesses').innerText = num;
-          */
-
-          //updateBusinessList();
-        });
+        // presets are to be in JSON format and saved as a string to a text file on the server-side.
+        // Here's a great solution for saving the json to file https://www.npmjs.com/package/jsonfile
 
     </script>
 
