@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en" dir="ltr">
+
   <head>
     <meta charset="utf-8">
     <title>Category Remover Tool</title>
@@ -7,13 +8,13 @@
     <link rel="stylesheet" type="text/css" href="css/multi-select.css">
     <link rel="stylesheet" type="text/css" href="css/stylesheet.css">
     <style>
-
-
+      /* styles */
     </style>
-
   </head>
+
   <body>
     <div class="container">
+
       <!-- NAVBAR -->
       <ul class="nav nav-tabs" id="myTab" role="tablist">
         <li class="nav-item">
@@ -22,17 +23,18 @@
         <li class="nav-item">
           <a class="nav-link" id="businesses-tab" data-toggle="tab" href="#businesses" role="tab" aria-controls="businesses" aria-selected="false">Businesses</a>
         </li>
-
       </ul>
+      <!----------->
+
       <div class="tab-content" id="myTabContent">
         <div class="tab-pane fade show active" id="categories" role="tabpanel" aria-labelledby="categories-tab">
+
           <p id="select_buttons-categories" class="">
             <button type="button" class="btn btn-outline-primary" id="select-all" onclick="selectAll('categories');">Keep All</button>
             <button type="button" class="btn btn-outline-warning" id="deselect-all" onclick="deselectAll('categories');">Remove All</button>
           </p>
-          <p class="">
+          <p>
             <select id='pre-selected-categories' multiple='multiple'>
-
               <% var keepCategoryArray = new Array(); %>
               <% var keepBusinessArray = new Array(); %>
 
@@ -52,32 +54,34 @@
               <%  keepBusinessArray.sort(); %>
 
               <% for(q=0; q < keepCategoryArray.length; q++){ %>
-
               <option id='option_categories<%= q %>' value='<%= keepCategoryArray[q] %>' selected><%= keepCategoryArray[q] %></option>
               <% } %>
-              </select>
-            </p>
+            </select>
+          </p>
+
         </div>
+
         <div class="tab-pane fade" id="businesses" role="tabpanel" aria-labelledby="businesses-tab">
 
           <p id="select_buttons-businesses" class="">
             <button type="button" class="btn btn-outline-primary" id="select-all" onclick="selectAll('businesses');">Keep All</button>
             <button type="button" class="btn btn-outline-warning" id="deselect-all" onclick="deselectAll('businesses');">Remove All</button>
           </p>
-          <p class="">
+
+          <p>
             <select id='pre-selected-businesses' multiple='multiple'>
               <% for(q=0; q < keepBusinessArray.length; q++){ %>
               <option id='option_businesses<%= q %>' value='<%= keepBusinessArray[q] %>' selected><%= keepBusinessArray[q] %></option>
               <% } %>
             </select>
-            </p>
+          </p>
 
         </div>
       </div>
-
-      <button type="button" class="btn btn-outline-danger" id="next" onclick="nextTab();">NEXT</button>
-      <button type="button" class="btn btn-outline-primary" id="submit" onclick="submitSelect();">Submit</button>
-
+      <div>
+        <button type="button" class="btn btn-outline-danger" id="update" onclick="update();">Update</button>
+        <button type="button" class="btn btn-outline-primary" id="submit" onclick="submitSelect();">Submit</button>
+      </div>
     </div>
 
     <form action="/clean-list" method="post" id="categoryForm">
@@ -97,18 +101,31 @@
     <% } %>
 
     <script type="text/javascript">
-      var listObj = [<%- list.join(', \n') %>];
+      var listArray = [<%- list.join(', \n') %>];
 
       // 1. on category change
       //   - get array of changed categories
       //   - get array of businesses that match those categories
       //   - get array of ids that match those businesses
-      function getCategores(){
+
+      function getCategories(){
         let result = { "selected": [], "deselected": [] };
 
         // get each option value and place in selected or deselected
-        // depending on 'selected' attribute
+/*
+        $('#pre-selected-categories option').each(function(){
+          console.log($(this));
+        });
+*/
+        $('#pre-selected-categories option:not(:selected)').each(function(){
+          result.deselected.push($(this).val());
+        });
 
+        $('#pre-selected-categories option:selected').each(function(){
+          result.selected.push($(this).val());
+        });
+
+        // depending on 'selected' attribute
 
         return result;
       };
@@ -122,8 +139,23 @@
         //     for each item
         //        if item[1] == category.selected item, then push item[0] to result.selected
 
-        // repeat for categories.deselected
+        for(i=0; i < categories.selected.length; i++) {
+          for(x=0; x < listArray.length; x++){
+            if(categories.selected[i] == listArray[x][1]){
+              result.selected.push(listArray[x][0])
+            }
+          }
+        }
 
+        // repeat for categories.deselected
+        for(i=0; i < categories.deselected.length; i++) {
+          for(x=0; x < listArray.length; x++){
+            if(categories.deselected[i] == listArray[x][1]){
+              result.deselected.push(listArray[x][0])
+            }
+          }
+        }
+        console.log(result.deselected);
         return result;
       };
 
@@ -132,9 +164,17 @@
         // loop through options_businesses
         //   for each item
         //     if businessNames.selected includes item.val(), then push item id to result.selected
-
+/*
+        $('#pre-selected-businesses option:selected').each(function(){
+          result.selected.push($(this).attr('id'));
+        });
         // repeat for businessNames.deselected
-        return result; 
+
+        $('#pre-selected-businesses option:not(:selected)').each(function(){
+          result.deselected.push($(this).attr('id'));
+        });
+*/
+        return result;
       };
 
       function updateSelection(businessIds){
@@ -142,11 +182,13 @@
         $('#pre-selected-businesses').multiSelect('deselect', businessIds.deselected);
       };
 
-      function nextTab(){
+      function update(){
         let categories = getCategories();
         let businessNames = getBusinessNames(categories);
         let businessIds = getBusinessIds(businessNames);
         updateSelection(businessIds);
+
+        // toggle nav tabs  to businesses
       };
 
     </script>
