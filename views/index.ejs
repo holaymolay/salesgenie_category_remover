@@ -102,11 +102,12 @@
 
     <script type="text/javascript">
       var listArray = [<%- list.join(', \n') %>];
-
+      var count = 0;
       // 1. on category change
       //   - get array of changed categories
       //   - get array of businesses that match those categories
       //   - get array of ids that match those businesses
+      $('#pre-selected-businesses').multiSelect('deselect', ['option_businesses0', 'option_businesses1', 'option_businesses2']);
 
       function getCategories(){
         let result = { "selected": [], "deselected": [] };
@@ -126,7 +127,7 @@
         });
 
         // depending on 'selected' attribute
-
+        console.log("got categories");
         return result;
       };
 
@@ -155,7 +156,8 @@
             }
           }
         }
-        console.log(result.deselected);
+        console.log("got business names");
+        //console.log(result.deselected);
         return result;
       };
 
@@ -164,29 +166,77 @@
         // loop through options_businesses
         //   for each item
         //     if businessNames.selected includes item.val(), then push item id to result.selected
-/*
-        $('#pre-selected-businesses option:selected').each(function(){
-          result.selected.push($(this).attr('id'));
-        });
         // repeat for businessNames.deselected
 
-        $('#pre-selected-businesses option:not(:selected)').each(function(){
-          result.deselected.push($(this).attr('id'));
+        /*$('#pre-selected-businesses option').each(function(){
+          console.log(count++);
+
+          //console.log(businessNames.selected.includes($(this).val()));
+          if(businessNames.selected.includes($(this).val())){
+            result.selected.push($(this).attr('id'));
+          } else {
+            result.deselected.push($(this).attr('id'));
+          }
+
+          //result.selected.push($(this).attr('id'));
+        }); */
+
+    /*
+        let count = 0;
+        for(i=0; i < businessNames.deselected.length; i++) {
+          console.log(businessNames.deselected[i]);
+        }
+
+        $('#pre-selected-businesses option:selected').each(function(){
+          //result.selected.push($(this).attr('id'));
+          console.log(count++ + " | " + $(this).attr('id'));
         });
-*/
+
+        $('#pre-selected-businesses option:not(:selected)').each(function(){
+          //result.deselected.push($(this).attr('id'));
+          console.log("DESELECTED: " + $(this).attr('id'));
+
+        });
+    */
+        let xyz = document.getElementById('pre-selected-businesses').querySelectorAll('option');
+
+        for(z=0; z < xyz.length; z++) {
+          //console.log(xyz[z].id);
+          //.is(':selected') == true
+          let idVal = $('#'+xyz[z].id).val();
+
+          if( businessNames.selected.includes(idVal) ) {
+            result.selected.push(xyz[z].id);
+          } else {
+            result.deselected.push(xyz[z].id);
+          }
+        }
+
+        console.log('got business ids');
+        //console.log(result.deselected);
         return result;
       };
 
       function updateSelection(businessIds){
-        $('#pre-selected-businesses').multiSelect( 'select', businessIds.selected );
-        $('#pre-selected-businesses').multiSelect('deselect', businessIds.deselected);
+        //console.log(businessIds.deselected);
+        //$('#pre-selected-businesses').multiSelect( 'select', businessIds.selected );
+        //$('#pre-selected-businesses').multiSelect('deselect', businessIds.deselected);
+        //$('#pre-selected-businesses').multiSelect('deselect', ['option_businesses0', 'option_businesses1', 'option_businesses2']);
+        //$('#pre-selected-businesses').multiSelect('deselect', ['option_businesses0', 'option_businesses1', 'option_businesses2']);
+
+        console.log('updated businesses');
       };
 
       function update(){
         let categories = getCategories();
         let businessNames = getBusinessNames(categories);
         let businessIds = getBusinessIds(businessNames);
+        //console.log(businessIds);
         updateSelection(businessIds);
+        console.log("done");
+        //console.log($("#option_businesses0").val());
+        //let xyz = document.getElementById('pre-selected-businesses').querySelectorAll('option');
+        //console.log(xyz[0].id);
 
         // toggle nav tabs  to businesses
       };
