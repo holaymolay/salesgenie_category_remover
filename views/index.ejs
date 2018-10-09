@@ -5,7 +5,8 @@
     <meta charset="utf-8">
     <title>Category Remover Tool</title>
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css" integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO" crossorigin="anonymous">
-    <link rel="stylesheet" type="text/css" href="css/multi-select.css">
+    <link rel="stylesheet" type="text/css" href="multijs/dist/multi.min.css">
+    <script src="/modules/multijs/dist/multi.min.js"></script>
     <link rel="stylesheet" type="text/css" href="css/stylesheet.css">
     <style>
       /* styles */
@@ -107,7 +108,6 @@
       //   - get array of changed categories
       //   - get array of businesses that match those categories
       //   - get array of ids that match those businesses
-      $('#pre-selected-businesses').multiSelect('deselect', ['option_businesses0', 'option_businesses1', 'option_businesses2']);
 
       function getCategories(){
         let result = { "selected": [], "deselected": [] };
